@@ -8,10 +8,7 @@
   <meta name="color-scheme" content="light dark">
   <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");
   try { var t = localStorage.getItem("mst-theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}</script>
-  <!-- TEMP FONT: Anton from Google Fonts for the logo lettering. Save a local copy before launch. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="preload" href="../fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
@@ -82,7 +79,7 @@
           <a class="btn btn-secondary" href="tel:+27619790504">Call 061 979 0504</a>
         </div>
       </div>
-      <figure class="svc-photo"><img src="https://static.wixstatic.com/media/eb7ca1_5d8e4a5a93ed4e9c88dec5b4efb62bc0~mv2.webp/v1/fill/w_1000,h_750,al_c,q_80,enc_auto/repairs.webp" alt="Pressure washers and vacuum cleaners being repaired in the MST workshop" width="1000" height="750" fetchpriority="high"></figure>
+      <figure class="svc-photo"><img src="../images/repairs.webp" alt="Pressure washers and vacuum cleaners being repaired in the MST workshop" width="1000" height="750" fetchpriority="high"></figure>
     </section>
 
     <section class="container svc-section" aria-labelledby="svc-what">

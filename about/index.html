@@ -8,10 +8,7 @@
   <meta name="color-scheme" content="light dark">
   <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");
   try { var t = localStorage.getItem("mst-theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}</script>
-  <!-- TEMP FONT: Anton from Google Fonts for the logo lettering. Save a local copy before launch. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="preload" href="../fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
@@ -79,7 +76,7 @@
           <h1 id="about-title">From pressure washer sales to full-scale supplier.</h1>
           <p class="about-lead">MST Pumps &amp; Mining Supplies is a South African–based specialist in high-pressure cleaning solutions, industrial pumps, and purpose-built equipment for demanding environments.</p>
           <!-- TEMP PHOTO: hotlinked from the current site for reference. Save a local copy (about 1200 x 900, 4:3) before launch. -->
-          <div class="photo-slot photo-slot--img about-photo"><img src="https://static.wixstatic.com/media/eb7ca1_f18e810049ad4fb198cf192a43bad2a2~mv2.webp/v1/fill/w_900,h_675,al_c,q_80,enc_auto/mst-custom-builds.webp" alt="A row of custom-built orange MST pressure washers with hoses and fittings" width="900" height="675" loading="lazy"></div>
+          <div class="photo-slot photo-slot--img about-photo"><img src="../images/about-builds.webp" alt="A row of custom-built orange MST pressure washers with hoses and fittings" width="900" height="675" loading="lazy"></div>
         </div>
 
         <ol class="journey">

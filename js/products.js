@@ -59,8 +59,8 @@
     badge.textContent = selected.length;
     badge.hidden = !selected.length;
     input.placeholder = selected.length === 1
-      ? "Search in " + nameOf(selected[0])
-      : "Search all products, e.g. unloader or 13 HP";
+      ? "Search this category"
+      : "Search all products, e.g. unloader";
   }
 
   function setSelected(list) {
