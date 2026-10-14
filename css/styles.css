@@ -113,6 +113,7 @@ body {
   font-size: 1rem;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-anchor: none; /* the header resizes while scrolling; stop the browser re-adjusting the scroll position for it */
 }
 
 h1,
@@ -395,7 +396,7 @@ section[id] {
   }
 
   .theme-toggle::before {
-    width: 22px;
+    width: 18px;
     height: 22px;
   }
 
@@ -949,6 +950,127 @@ section[id] {
   }
 }
 
+/* Phones: the tiles become one row you swipe through, so the section stays short. */
+.bento-hint {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .bento {
+    display: flex;
+    gap: 10px;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: 10px var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+    align-items: stretch;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .bento::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bento .tile {
+    flex: 0 0 74%;
+    height: auto;
+    min-height: 190px;
+    scroll-snap-align: start;
+  }
+
+  .bento-hint {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  .bento-dots {
+    display: flex;
+    gap: 0;
+    margin-left: -6px;
+  }
+
+  .bento-dots button {
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .bento-dots button::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink-2);
+    opacity: 0.45;
+    transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .bento-dots button:hover::before {
+    opacity: 1;
+  }
+
+  .bento-dots button.on::before {
+    background: var(--accent);
+    opacity: 1;
+    transform: scale(1.4);
+  }
+
+  .bento-dots button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 0;
+    border-radius: 6px;
+  }
+
+  .bento-swipe {
+    flex: none;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--accent) 80%, black);
+    transition: opacity 0.3s ease;
+  }
+
+  .bento-swipe.is-end {
+    opacity: 0.45;
+  }
+
+  .bento-swipe span {
+    display: inline-block;
+    font-size: 1.125rem;
+    line-height: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .bento-swipe:not(.is-end) span {
+      animation: swipe-nudge 1.3s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes swipe-nudge {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
+}
+
 /* ---------- Carwash sets (layout: two-column spec comparison) ---------- */
 .carwash {
   padding-block: var(--section-y);
@@ -1074,46 +1196,152 @@ section[id] {
   border-top: 1px solid var(--line);
 }
 
-.rows {
+.specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
   margin-top: 32px;
 }
 
-.row {
+.spec {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding-block: 24px;
+  flex-direction: column;
+  gap: 14px;
+  padding: 26px;
+  border: 1px solid var(--card-line);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--card) 85%, transparent);
+  color: var(--ink);
   text-decoration: none;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.row + .row {
-  border-top: 1px solid var(--line);
+.spec:hover,
+.spec:focus-visible {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow: 0 22px 40px -24px color-mix(in srgb, var(--accent) 70%, transparent);
 }
 
-.row h3 {
-  font-size: clamp(1.375rem, 3vw, 2.25rem);
-  font-weight: 700;
+@media (prefers-reduced-motion: reduce) {
+  .spec,
+  .spec:hover,
+  .spec:focus-visible {
+    transform: none;
+  }
+}
+
+/* Light theme: a firmer edge and a soft shadow so the panels stand out from the page. */
+:where(:root[data-theme="light"]) .spec {
+  border-color: #b9c1c9;
+  background: var(--card);
+  box-shadow: 0 1px 2px rgba(21, 25, 29, 0.08), 0 14px 26px -16px rgba(21, 25, 29, 0.4);
+}
+
+@media (prefers-color-scheme: light) {
+  :where(:root:not([data-theme="dark"])) .spec {
+    border-color: #b9c1c9;
+    background: var(--card);
+    box-shadow: 0 1px 2px rgba(21, 25, 29, 0.08), 0 14px 26px -16px rgba(21, 25, 29, 0.4);
+  }
+}
+
+.spec--soon {
+  border-style: dashed;
+}
+
+/* On hover the glow ring would show through the dashes as a stippled line, so the border goes solid like the other cards. */
+.spec--soon:hover,
+.spec--soon:focus-visible {
+  border-style: solid;
+}
+
+.spec-icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent-text);
+}
+
+.spec-icon svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.spec h3 {
+  font-size: 1.375rem;
+  font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
 
-.row p {
-  margin-top: 4px;
+.spec p {
   color: var(--ink-2);
 }
 
-.row:hover h3 {
+.spec .soon {
+  align-self: flex-start;
+  margin-top: 0;
+}
+
+.spec ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ink-2);
+}
+
+.spec li {
+  position: relative;
+  padding-left: 26px;
+}
+
+.spec li::before,
+.spec li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.3em;
+  width: 16px;
+  height: 16px;
+}
+
+.spec li::before {
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.spec li::after {
+  background: var(--accent-text);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.4 2.4 4.6-5' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.4 2.4 4.6-5' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat;
+}
+
+.spec-link {
+  margin-top: auto;
+  padding-top: 6px;
   color: var(--accent-text);
+  font-weight: 800;
 }
 
-.row .tile-arrow {
-  align-self: center;
-  font-size: 1.75rem;
+.spec-link span {
+  display: inline-block;
+  transition: transform 0.25s ease;
 }
 
-.row:hover .tile-arrow {
-  transform: translateX(4px);
+.spec:hover .spec-link span,
+.spec:focus-visible .spec-link span {
+  transform: translateX(5px);
 }
 
 /* ---------- Contact (layout: bento of rounded cards) ---------- */
@@ -2502,6 +2730,70 @@ main::after {
   }
 }
 
+/* Phones and tablets: the same blue-filling rail down the left of the steps (js/journey.js drives it). */
+@media (max-width: 899px) {
+  .journey {
+    --rail-x: -21px; /* horizontal centre of the rail and dots, measured from the card edge */
+    --gap: 14px;
+    position: relative;
+    margin-left: 30px;
+    gap: var(--gap);
+  }
+
+  .step::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: var(--rail-x);
+    width: 15px;
+    height: 15px;
+    border: 2px solid var(--line);
+    border-radius: 50%;
+    background: var(--bg);
+    box-shadow: 0 0 0 4px var(--bg);
+    transform: translate(-50%, -50%);
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+
+  .step::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--gap) / -2);
+    bottom: calc(var(--gap) / -2);
+    left: var(--rail-x);
+    width: 3px;
+    background: var(--line);
+    transform: translateX(-50%);
+  }
+
+  .step:first-child::after {
+    top: 50%;
+  }
+
+  .step:last-of-type::after {
+    bottom: 50%;
+  }
+
+  .step.is-reached::before {
+    border-color: var(--accent);
+    background: var(--accent);
+    animation: dot-pop 0.45s ease-out;
+  }
+
+  .journey-fill {
+    position: absolute;
+    z-index: 1;
+    left: var(--rail-x);
+    width: 3px;
+    height: 0;
+    background: var(--accent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 55%, transparent);
+    transform: translateX(-50%);
+    transition: height 0.12s linear;
+  }
+}
+
 @keyframes dot-pop {
   0% { transform: translate(-50%, -50%) scale(1); }
   45% { transform: translate(-50%, -50%) scale(1.7); }
@@ -2684,36 +2976,248 @@ main::after {
   font-size: 0.9375rem;
 }
 
-.choose-grid {
+/* Spec tables on the Custom Pressure Washers page: one row per topic, with tags for the options. */
+.spec-table {
+  width: 100%;
+  margin-top: 20px;
+  border: 1px solid var(--card-line);
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--card) 85%, transparent);
+  overflow: hidden;
+  text-align: left;
+}
+
+.spec-table th,
+.spec-table td {
+  padding: 14px 20px;
+  vertical-align: middle;
+  border-top: 1px solid var(--line);
+}
+
+.spec-table thead th {
+  padding-block: 10px;
+  border-top: 0;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent-text);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.spec-table tbody th {
+  width: 36%;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.spec-table tbody tr {
+  transition: background-color 0.25s ease;
+}
+
+.spec-table tbody tr:hover {
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  padding: 3px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.tag--key {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent-text);
+}
+
+.spec-note {
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  font-size: 0.9375rem;
+}
+
+/* Light theme: a firmer edge and a soft shadow, like the other panels. */
+:where(:root[data-theme="light"]) .spec-table {
+  border-color: #b9c1c9;
+  background: var(--card);
+  box-shadow: 0 14px 26px -18px rgba(21, 25, 29, 0.4);
+}
+
+@media (prefers-color-scheme: light) {
+  :where(:root:not([data-theme="dark"])) .spec-table {
+    border-color: #b9c1c9;
+    background: var(--card);
+    box-shadow: 0 14px 26px -18px rgba(21, 25, 29, 0.4);
+  }
+}
+
+@media (max-width: 480px) {
+  .spec-table th,
+  .spec-table td {
+    padding: 12px 14px;
+  }
+
+  .spec-table tbody th {
+    width: 34%;
+  }
+}
+
+/* The five choices: numbered stops on a blue line. Each one jumps to its section further down. */
+.choose-path {
+  position: relative;
   display: grid;
-  gap: 12px;
-  margin: 28px 0 0;
+  gap: 22px;
+  margin: 34px 0 0;
   padding: 0;
   list-style: none;
   grid-template-columns: 1fr;
 }
 
-.choose-grid li {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 18px 20px;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  background: var(--surface);
-  font-weight: 700;
+.choose-path::before {
+  content: "";
+  position: absolute;
+  left: 29px;
+  top: 30px;
+  bottom: 30px;
+  width: 3px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 30%, var(--line)));
 }
 
-.choose-grid .n {
+.stop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.stop h3 {
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.stop-dot {
+  position: relative;
   display: grid;
   place-items: center;
   flex: none;
-  width: 36px;
-  height: 36px;
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--accent);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--accent-text);
+  box-shadow: 0 0 0 6px var(--bg);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.stop-dot svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.stop-dot b {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--accent);
   color: var(--accent-ink);
+  font-size: 0.75rem;
   font-weight: 800;
+}
+
+/* On hover the circle turns blue, so the number badge flips to a light chip with a ring to stay visible. */
+.stop-dot b {
+  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stop:hover .stop-dot b,
+.stop:focus-visible .stop-dot b {
+  background: var(--ink);
+  color: var(--bg);
+  box-shadow: 0 0 0 3px var(--bg);
+}
+
+.stop:hover .stop-dot,
+.stop:focus-visible .stop-dot {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.stop:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  outline-offset: 6px;
+  border-radius: 12px;
+}
+
+/* Where the stops jump to: leave room under the sticky header. */
+[id^="svc-"] {
+  scroll-margin-top: 120px;
+}
+
+@media (min-width: 760px) {
+  .choose-path {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  .choose-path::before {
+    left: 10%;
+    right: 10%;
+    top: 29px;
+    bottom: auto;
+    width: auto;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 30%, var(--line)));
+  }
+
+  .stop {
+    flex-direction: column;
+    gap: 12px;
+    padding-inline: 6px;
+    text-align: center;
+  }
+
+  .stop:hover,
+  .stop:focus-visible {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stop:hover,
+  .stop:focus-visible {
+    transform: none;
+  }
 }
 
 .gallery {
@@ -2759,7 +3263,6 @@ main::after {
 }
 
 @media (min-width: 700px) {
-  .choose-grid { grid-template-columns: 1fr 1fr; }
   .gallery { grid-template-columns: repeat(3, 1fr); }
 }
 
@@ -2768,8 +3271,6 @@ main::after {
   .svc-grid--2 { grid-template-columns: 1fr 1fr; }
   .svc-split { grid-template-columns: 1fr 1fr; gap: 40px; }
   .svc-split--flip .svc-photo { order: -1; }
-  .choose-grid { grid-template-columns: repeat(5, 1fr); }
-  .choose-grid li { flex-direction: column; align-items: flex-start; gap: 12px; }
   .gallery { grid-template-columns: repeat(5, 1fr); }
   .svc-contact { grid-template-columns: 1fr 1fr 1.6fr; }
 }
@@ -3074,5 +3575,402 @@ main::after {
   .qstep--sm button {
     width: 38px;
     height: 38px;
+  }
+}
+
+/* ---------- Products page: category sidebar (a swipe row on phones) and product cards (js/products.js) ---------- */
+.browse-btn[hidden],
+.filter-chips[hidden] {
+  display: none;
+}
+
+.shop-side {
+  display: none;
+}
+
+.has-shop .shop-side {
+  display: block;
+}
+
+/* Phones and tablets: the categories are a row of pills you swipe through. */
+.has-shop .shop-side .cat-head {
+  display: none;
+}
+
+.side-list {
+  display: flex;
+  gap: 8px;
+  margin-inline: calc(var(--gutter) * -1);
+  padding: 4px var(--gutter) 6px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.side-list::-webkit-scrollbar {
+  display: none;
+}
+
+.side-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 14px;
+  border: 1px solid var(--card-line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: left;
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.side-btn b {
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 16%, transparent);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.side-btn:hover {
+  border-color: var(--accent);
+}
+
+.side-btn.on {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Product cards */
+.has-shop .prod-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.has-shop .prod {
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "ic body act"
+    "ic price act";
+  gap: 2px 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--card-line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.has-shop .prod:hover {
+  border-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .has-shop .prod:hover {
+    transform: translateX(4px);
+  }
+}
+
+.prod-ic {
+  grid-area: ic;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent-text);
+}
+
+.prod-ic svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.prod-body {
+  grid-area: body;
+  min-width: 0;
+}
+
+.has-shop .prod-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.has-shop .prod-price {
+  grid-area: price;
+}
+
+.prod-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 5px;
+}
+
+.prod-tag {
+  padding: 2px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.prod-tag--key {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent-text);
+}
+
+.has-shop .prod-act {
+  grid-area: act;
+  grid-column: auto;
+  min-height: 0;
+}
+
+/* "Add to Quote" becomes a round + (its label stays for screen readers and as a tooltip). */
+.has-shop .prod-act .prod-add {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  min-height: 0;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: none;
+  color: var(--ink);
+  font-size: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.25s ease;
+}
+
+.has-shop .prod-act .prod-add::before {
+  content: "+";
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.has-shop .prod-act .prod-add:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+  transform: rotate(90deg);
+}
+
+@media (min-width: 720px) {
+  .has-shop .prod {
+    grid-template-columns: 46px minmax(0, 1fr) auto auto;
+    grid-template-areas: "ic body price act";
+    align-items: center;
+    gap: 16px;
+  }
+
+  .has-shop .prod-price {
+    text-align: right;
+  }
+}
+
+/* Desktop: a sticky sidebar. Its heading shares the category heading style, so "Products" and its box sit level with the category title and its cards. */
+@media (min-width: 900px) {
+  .has-shop {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0 32px;
+    align-items: start;
+  }
+
+  .has-shop .shop-side {
+    position: sticky;
+    top: 150px; /* below the header even when its nav row is showing, so the sidebar never shifts */
+    padding-top: 40px;
+  }
+
+  .has-shop .shop-side .cat-head {
+    display: flex;
+  }
+
+  .side-list {
+    display: grid;
+    gap: 4px;
+    margin: 16px 0 0;
+    padding: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: max(260px, calc(100vh - 340px));
+    border: 1px solid var(--card-line);
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--card) 88%, transparent);
+  }
+
+  .side-btn {
+    width: 100%;
+    padding: 11px 14px;
+    border: 0;
+    border-radius: 12px;
+    background: none;
+    white-space: normal;
+  }
+
+  .side-btn:hover {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+
+  .side-btn.on {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+}
+
+/* Light theme: a firmer edge so the boxes stand out from the page. */
+:where(:root[data-theme="light"]) :is(.has-shop .prod, .side-list, .side-btn) {
+  border-color: #b9c1c9;
+}
+
+:where(:root[data-theme="light"]) .has-shop .prod,
+:where(:root[data-theme="light"]) .side-list {
+  background: var(--card);
+  box-shadow: 0 10px 22px -16px rgba(21, 25, 29, 0.4);
+}
+
+@media (prefers-color-scheme: light) {
+  :where(:root:not([data-theme="dark"])) :is(.has-shop .prod, .side-list, .side-btn) {
+    border-color: #b9c1c9;
+  }
+
+  :where(:root:not([data-theme="dark"])) .has-shop .prod,
+  :where(:root:not([data-theme="dark"])) .side-list {
+    background: var(--card);
+    box-shadow: 0 10px 22px -16px rgba(21, 25, 29, 0.4);
+  }
+}
+
+/* Phones: a "Filters" button opens a small panel where you tick the categories you want. The sidebar is for desktop. */
+.has-shop .shop-side {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .has-shop .shop-side {
+    display: block;
+  }
+
+  .has-shop-ui .browse-btn,
+  .has-shop-ui .browse-panel,
+  .has-shop-ui .filter-chips {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .has-shop-ui .tools {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .has-shop-ui .tools .hs-field,
+  .has-shop-ui .tools .hs-input {
+    min-width: 0;
+  }
+
+  .has-shop-ui .tools-bar {
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+
+  .has-shop-ui .tools .hs {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+  }
+
+  .has-shop-ui .browse-btn {
+    min-height: 56px;
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  .has-shop-ui .browse-btn .chev {
+    display: none;
+  }
+
+  /* A small, scrollable panel instead of a full-width sheet. */
+  .has-shop-ui .browse-panel {
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    /* The same blue beam and faint grid as the page background. */
+    background:
+      radial-gradient(70% 45% at 0% 0%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 70%),
+      linear-gradient(135deg, transparent 6%, color-mix(in srgb, var(--accent) 24%, transparent) 30%, color-mix(in srgb, var(--accent) 8%, transparent) 50%, transparent 68%),
+      linear-gradient(135deg, transparent 0%, var(--surface) 72%),
+      linear-gradient(color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px) 0 0 / 40px 40px,
+      var(--surface);
+    background-attachment: local;
+    width: min(320px, 100%);
+    max-height: min(70vh, 460px);
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 20px;
+  }
+
+  .has-shop-ui .browse-grid {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 899px) {
+  .has-shop-ui .cat-card {
+    padding: 11px 14px;
+    border-radius: 14px;
+  }
+
+  .has-shop-ui .cat-desc {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  /* Keep "Clear all" and "Show N products" in view while the category list scrolls. */
+  .has-shop-ui .browse-foot {
+    position: sticky;
+    bottom: -10px;
+    margin: 6px -10px -10px;
+    padding: 10px;
+    border-top: 1px solid var(--line);
+    border-radius: 0 0 20px 20px;
+    background: var(--surface);
+  }
+}
+
+@media (max-width: 899px) {
+  /* Let the panel's glow show through the category cards and the pinned footer. */
+  .has-shop-ui .cat-card {
+    background: color-mix(in srgb, var(--card) 72%, transparent);
+  }
+
+  .has-shop-ui .cat-card:has(input:checked) {
+    background: color-mix(in srgb, var(--accent) 16%, var(--card));
+  }
+
+  .has-shop-ui .browse-foot {
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
   }
 }

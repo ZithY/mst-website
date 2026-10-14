@@ -1,10 +1,10 @@
-// About page: colour the rail in as the visitor scrolls down the steps.
+// About page: colour the rail in as the visitor scrolls down the steps (on every screen size).
 // The fill tracks the page's scroll position, like the browser scroll bar.
 (function () {
   var list = document.querySelector(".journey");
   if (!list) return;
   var steps = Array.prototype.slice.call(list.querySelectorAll(".step"));
-  var wide = window.matchMedia("(min-width: 900px)"); // the rail only exists on wide screens
+  var wide = { matches: true }; // the rail shows on phones and PCs alike
   var fill = document.createElement("span");
   fill.className = "journey-fill";
   fill.setAttribute("aria-hidden", "true");

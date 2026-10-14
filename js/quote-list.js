@@ -95,7 +95,7 @@
       d.act.appendChild(box);
     } else {
       var add = el("button", "btn btn-secondary prod-add", "Add to Quote");
-      add.type = "button"; add.setAttribute("data-ql", "add"); add.setAttribute("data-id", d.id); add.setAttribute("aria-label", "Add " + d.n + " to your quote list");
+      add.type = "button"; add.title = "Add to quote"; add.setAttribute("data-ql", "add"); add.setAttribute("data-id", d.id); add.setAttribute("aria-label", "Add " + d.n + " to your quote list");
       d.act.appendChild(add);
     }
   }
