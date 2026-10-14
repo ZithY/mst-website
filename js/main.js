@@ -78,3 +78,16 @@
 
   if (query && query.addEventListener) query.addEventListener("change", show);
 })();
+
+// Page glow: on the home page it starts where the hero photo ends.
+(function () {
+  var hero = document.querySelector(".hero");
+  var main = document.getElementById("main");
+  if (!hero || !main) return;
+  function place() {
+    main.style.setProperty("--glow-top", hero.offsetHeight + "px");
+  }
+  place();
+  window.addEventListener("resize", place);
+  window.addEventListener("load", place);
+})();
