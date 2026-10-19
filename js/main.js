@@ -74,7 +74,7 @@
   function effective() {
     var set = root.getAttribute("data-theme");
     if (set === "light" || set === "dark") return set;
-    return "dark";
+    return "light";
   }
 
   function show() {
