@@ -4943,3 +4943,51 @@ main::after {
     min-height: 220px;
   }
 }
+
+/* Photo tiles: no pale border around the dark photo (it shimmered against the photo edge while the tile moved on hover),
+   and the photo layer clips and covers its own box so the vignette reaches every edge during the animation. */
+.tile.tile--photo,
+.tile.tile--photo:hover,
+.tile.tile--photo:focus-visible {
+  border-color: #10151a;
+}
+
+.tile-photo {
+  overflow: hidden;
+  border-radius: inherit;
+  transform: translateZ(0);
+}
+
+.tile-photo::after {
+  inset: -2px;
+}
+
+.tile-photo img {
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* ---------- Carwash sets: photo across the top of each card (the card's own hover lift and glow still apply) ---------- */
+.kit-photo {
+  position: relative;
+  overflow: hidden;
+  margin: -28px -28px 24px;
+  aspect-ratio: 10 / 7;
+  background: #e9eaec;
+}
+
+.kit-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* A subtle vignette: a soft shade only at the very edges. */
+.kit-photo::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 45%, rgba(16, 21, 26, 0) 58%, rgba(16, 21, 26, 0.16) 100%);
+}
