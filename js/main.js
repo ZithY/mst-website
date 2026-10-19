@@ -64,7 +64,7 @@
   if (nav) nav.addEventListener("focusin", function () { header.classList.remove("nav-hidden"); });
 })();
 
-// Light / dark switch. Follows the device until the visitor picks a side, then remembers the choice.
+// Light / dark switch. The site opens in dark mode (set in each page head) until the visitor picks a side, then remembers the choice.
 (function () {
   var toggle = document.getElementById("theme-toggle");
   if (!toggle) return;
@@ -74,7 +74,7 @@
   function effective() {
     var set = root.getAttribute("data-theme");
     if (set === "light" || set === "dark") return set;
-    return query && query.matches ? "dark" : "light";
+    return "dark";
   }
 
   function show() {

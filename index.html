@@ -22,7 +22,7 @@
   <meta property="og:image:alt" content="MST Pumps &amp; Mining Supplies logo on a dark blue card. Built for industry. Call 061 979 0504.">
   <meta name="twitter:card" content="summary_large_image">
   <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");
-  try { var t = localStorage.getItem("mst-theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}</script>
+  var t = null; try { t = localStorage.getItem("mst-theme"); } catch (e) {} document.documentElement.setAttribute("data-theme", t === "light" ? "light" : "dark");</script>
   <link rel="preload" href="fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/styles.css">
   <script type="application/ld+json">

@@ -12,7 +12,7 @@
   <link rel="icon" href="favicon.ico" sizes="48x48">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");
-  try { var t = localStorage.getItem("mst-theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}</script>
+  var t = null; try { t = localStorage.getItem("mst-theme"); } catch (e) {} document.documentElement.setAttribute("data-theme", t === "light" ? "light" : "dark");</script>
   <link rel="preload" href="fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/styles.css">
 </head>
