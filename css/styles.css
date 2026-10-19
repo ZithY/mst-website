@@ -4906,9 +4906,9 @@ main::after {
   opacity: 0.92;
 }
 
-/* The chemicals strip is a wide picture on pure black: show all of it at any width, lined up at the top. */
+/* The chemicals strip is a wide picture on a light studio background: show all of it at any width, lined up at the top. */
 .t-f .tile-photo {
-  background: #000;
+  background: #e2e3e5;
 }
 
 .t-f .tile-photo img {
