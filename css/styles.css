@@ -4006,9 +4006,15 @@ main::after {
   }
 
   .has-shop .shop-side {
-    position: sticky;
-    top: 150px; /* below the header even when its nav row is showing, so the sidebar never shifts */
     padding-top: 40px;
+  }
+
+  /* Sticky only when the window is tall enough to show the whole list; on a short window it scrolls with the page so no category is ever cut off. */
+  @media (min-height: 700px) {
+    .has-shop .shop-side {
+      position: sticky;
+      top: 150px; /* below the header even when its nav row is showing, so the sidebar never shifts */
+    }
   }
 
   .has-shop .shop-side .cat-head {
@@ -4020,9 +4026,6 @@ main::after {
     gap: 2px;
     margin: 16px 0 0;
     padding: 8px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    max-height: max(260px, calc(100vh - 340px));
     border: 1px solid var(--card-line);
     border-radius: 20px;
     background: color-mix(in srgb, var(--card) 88%, transparent);
