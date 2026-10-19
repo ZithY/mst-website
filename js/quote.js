@@ -1,4 +1,5 @@
-// "Request a quote" pop-up. Any link to mailto:Sales@mstindustrial.co.za?subject=Quote... opens it.
+// "Request a quote" pop-up. Any link to mailto:Sales@mstindustrial.co.za?subject=Quote... opens it, and a link marked
+// data-enquiry (the Email card) opens it with a choice between a quote and a general enquiry.
 // Without JavaScript (or an old browser) those links still open an email as before.
 (function () {
   if (typeof HTMLDialogElement === "undefined") return;
@@ -13,6 +14,7 @@
 
   var dlg, form, productRow, productName, formView, doneView, lastFocus;
   var itemsBox, leadEl, listMode = false, subscribed = false;
+  var typeBox, titleEl, msgText, msgOpt, msgReq, msgBox, submitBtn, isEnquiry = false, leadQuote = "";
 
   function build() {
     dlg = document.createElement("dialog");
@@ -24,6 +26,7 @@
         '<div class="quote-view" data-view="form">' +
           '<h2 id="quote-title">Request a quote</h2>' +
           '<p class="quote-lead">Tell us how to reach you and we will come back with a price.</p>' +
+          '<div class="quote-type" role="group" aria-label="What would you like to do?" hidden><button type="button" class="on" data-kind="quote" aria-pressed="true">Request a quote</button><button type="button" data-kind="enquiry" aria-pressed="false">General enquiry</button></div>' +
           '<p class="quote-product" hidden>Quote for: <strong></strong></p>' +
           '<div class="quote-items" hidden></div>' +
           '<form novalidate>' +
@@ -31,8 +34,8 @@
             field("email", "Email address", "email", "email", true, "") +
             field("phone", "Contact number", "tel", "tel", true, ' inputmode="tel" pattern="[0-9+\\(\\)\\s\\-]{9,}"') +
             field("company", "Company name <span class=\"quote-opt\">(optional)</span>", "text", "organization", false, "") +
-            '<div class="quote-field"><label for="quote-message">What do you need a price on? <span class="quote-opt">(optional)</span></label>' +
-            '<textarea id="quote-message" name="message" rows="3"></textarea></div>' +
+            '<div class="quote-field"><label for="quote-message"><span id="quote-msg-text">What do you need a price on?</span> <span class="quote-opt" id="quote-msg-opt">(optional)</span><span class="quote-req" id="quote-msg-req" aria-hidden="true" hidden>*</span></label>' +
+            '<textarea id="quote-message" name="message" rows="3"></textarea><p class="quote-error" id="quote-message-err" hidden></p></div>' +
             '<input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">' +
             '<div class="quote-actions">' +
               '<button class="btn btn-primary" type="submit">Send request</button>' +
@@ -59,8 +62,17 @@
     leadEl = dlg.querySelector('[data-view="form"] .quote-lead');
     formView = dlg.querySelector('[data-view="form"]');
     doneView = dlg.querySelector('[data-view="done"]');
+    titleEl = dlg.querySelector("#quote-title");
+    typeBox = dlg.querySelector(".quote-type");
+    msgText = dlg.querySelector("#quote-msg-text");
+    msgOpt = dlg.querySelector("#quote-msg-opt");
+    msgReq = dlg.querySelector("#quote-msg-req");
+    msgBox = dlg.querySelector("#quote-message");
+    submitBtn = form.querySelector('[type="submit"]');
 
     dlg.addEventListener("click", function (e) {
+      var kb = e.target.closest && e.target.closest("[data-kind]");
+      if (kb) { setKind(kb.getAttribute("data-kind") === "enquiry"); return; }
       var qb = e.target.closest && e.target.closest("[data-qi]");
       if (qb && window.MSTList) {
         var id = qb.getAttribute("data-id"), role = qb.getAttribute("data-qi");
@@ -106,6 +118,30 @@
     itemsBox.appendChild(mk("p", "qi-note", "Prices are a guide. We confirm stock, delivery and the final price."));
   }
 
+  // Quote or general enquiry: the same form, with a different heading, message label, and subject line.
+  function setKind(enq) {
+    isEnquiry = !!enq;
+    Array.prototype.forEach.call(typeBox.querySelectorAll("[data-kind]"), function (b) {
+      var on = (b.getAttribute("data-kind") === "enquiry") === isEnquiry;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    titleEl.textContent = isEnquiry ? "Send an enquiry" : "Request a quote";
+    leadEl.textContent = isEnquiry ? "Ask us anything and we will come back to you." : leadQuote;
+    msgText.textContent = isEnquiry ? "Your message" : "What do you need a price on?";
+    msgOpt.hidden = isEnquiry;
+    msgReq.hidden = !isEnquiry;
+    msgBox.required = isEnquiry;
+    msgBox.rows = isEnquiry ? 5 : 3;
+    submitBtn.textContent = isEnquiry ? "Send enquiry" : "Send request";
+    if (!isEnquiry) {
+      msgBox.removeAttribute("aria-invalid");
+      msgBox.removeAttribute("aria-describedby");
+      var me = document.getElementById("quote-message-err");
+      if (me) me.hidden = true;
+    }
+  }
+
   function listText(items) {
     return items.map(function (it) { return it.q + " x " + it.n + " (" + it.p + " each)"; }).join("\n");
   }
@@ -120,7 +156,8 @@
   var MESSAGES = {
     name: "Please enter your name.",
     email: "Please enter a valid email address.",
-    phone: "Please enter a contact number, for example 061 979 0504."
+    phone: "Please enter a contact number, for example 061 979 0504.",
+    message: "Please type your message."
   };
 
   function validate(input) {
@@ -139,7 +176,7 @@
   function submit(e) {
     e.preventDefault();
     var bad = null;
-    Array.prototype.forEach.call(form.querySelectorAll("input[required], input[pattern]"), function (input) {
+    Array.prototype.forEach.call(form.querySelectorAll("input[required], input[pattern], textarea[required]"), function (input) {
       if (!validate(input) && !bad) bad = input;
     });
     if (bad) { bad.focus(); return; }
@@ -150,8 +187,10 @@
     var kinds = items.length;
     var data = {
       name: v("name"), email: v("email"), phone: v("phone"), company: v("company"),
-      product: product, message: v("message"), items: items.length ? listText(items) : "",
-      subject: "Quote request" + (kinds ? ": " + kinds + (kinds === 1 ? " product" : " products") : product ? ": " + product : "") + " - " + v("name")
+      product: product, message: v("message"), items: items.length ? listText(items) : "", enquiry: isEnquiry,
+      subject: isEnquiry
+        ? "Website enquiry - " + v("name")
+        : "Quote request" + (kinds ? ": " + kinds + (kinds === 1 ? " product" : " products") : product ? ": " + product : "") + " - " + v("name")
     };
     if (ACCESS_KEY) sendToInbox(data); else openEmailApp(data);
   }
@@ -161,11 +200,11 @@
     var title = doneView.querySelector("h2"), msg = doneView.querySelector(".done-msg"), help = doneView.querySelector(".done-help");
     if (kind === "sent") {
       title.textContent = "Thank you";
-      msg.textContent = "We have your request and will be in touch soon.";
+      msg.textContent = isEnquiry ? "We have your message and will be in touch soon." : "We have your request and will be in touch soon.";
       help.innerHTML = 'Need us sooner? Call <a href="tel:+27619790504">061 979 0504</a>.';
     } else {
       title.textContent = "Nearly done";
-      msg.textContent = "Your email app should now be open with your request ready to send. Press send there to finish.";
+      msg.textContent = "Your email app should now be open with your " + (isEnquiry ? "message" : "request") + " ready to send. Press send there to finish.";
       help.innerHTML = 'Nothing opened? Email <a href="mailto:' + EMAIL + '">' + EMAIL + '</a> or call <a href="tel:+27619790504">061 979 0504</a>.';
     }
     formView.hidden = true;
@@ -176,7 +215,9 @@
   }
 
   function openEmailApp(d) {
-    var lines = ["Name: " + d.name, "Email: " + d.email, "Phone: " + d.phone];
+    var lines = [];
+    if (d.enquiry) lines.push("Type: General enquiry");
+    lines.push("Name: " + d.name, "Email: " + d.email, "Phone: " + d.phone);
     if (d.company) lines.push("Company: " + d.company);
     if (d.product) lines.push("Product: " + d.product);
     if (d.items) lines.push("", "Items:", d.items);
@@ -200,7 +241,7 @@
       body: JSON.stringify({
         access_key: ACCESS_KEY, from_name: "MST website", subject: d.subject,
         name: d.name, email: d.email, phone: d.phone, company: d.company,
-        product: d.product, items: d.items, message: d.message, botcheck: form.elements.botcheck.checked
+        product: d.product, items: d.items, message: d.message, enquiry_type: d.enquiry ? "General enquiry" : "Quote request", botcheck: form.elements.botcheck.checked
       }),
       signal: ctrl ? ctrl.signal : undefined
     })
@@ -230,9 +271,12 @@
     }
     itemsBox.hidden = !listMode;
     if (listMode) renderItems();
-    leadEl.textContent = listMode
+    leadQuote = listMode
       ? "Check your list, then tell us how to reach you and we will come back with a price."
       : "Tell us how to reach you and we will come back with a price.";
+    // Opened from the Email card: let the visitor choose between a quote and a general enquiry.
+    typeBox.hidden = !(opts && opts.choose);
+    setKind(false);
 
     productName.textContent = listMode ? "" : product || "";
     productRow.hidden = listMode || !product;
@@ -245,6 +289,13 @@
   }
 
   document.addEventListener("click", function (e) {
+    // Links marked data-enquiry (the Email card) open the pop-up with the quote / enquiry choice.
+    var en = e.target.closest && e.target.closest("[data-enquiry]");
+    if (en && !e.defaultPrevented && e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey) {
+      e.preventDefault();
+      open("", { choose: true });
+      return;
+    }
     var a = e.target.closest && e.target.closest('a[href^="mailto:"]');
     if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
     var href = a.getAttribute("href");
