@@ -182,8 +182,8 @@
   if (q) input.value = q;
   var hash = location.hash.replace("#", "");
   var known = cats.some(function (c) { return c.slug === hash; });
-  // No hash: open on the first category so the page is not one long scroll. "All products" is in the sidebar.
-  setSelected(known ? [hash] : (q ? [] : [cats[0].slug]));
+  // No hash: open with no filter, so every product is listed. A #category link (the homepage tiles) still opens that category.
+  setSelected(known ? [hash] : []);
 
   // ---- sidebar (desktop) / swipe row (phones), and a category icon plus spec tags on every row ----
   function buildShop() {
@@ -277,12 +277,15 @@
     b.type = "button";
     b.className = "side-btn";
     b.setAttribute("data-slug", slug);
-    b.innerHTML = "<span>" + name + "</span><b>" + n + "</b>";
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = '<span class="side-tick" aria-hidden="true">' + svg("i-tick") + '</span><span class="side-name">' + name + "</span><b>" + n + "</b>";
+    // Each category is a tick box: click to add it to the filter, click again to remove it. "All products" clears the filter.
     b.addEventListener("click", function () {
       input.value = "";
-      setSelected(slug ? [slug] : []);
+      var next = !slug ? [] : selected.indexOf(slug) !== -1 ? selected.filter(function (s) { return s !== slug; }) : selected.concat(slug);
+      setSelected(next);
       backToTop();
-      if (history.replaceState) history.replaceState(null, "", slug ? "#" + slug : location.pathname + location.search.replace(/[?&]q=[^&]*/, ""));
+      if (history.replaceState) history.replaceState(null, "", next.length === 1 ? "#" + next[0] : location.pathname + location.search.replace(/[?&]q=[^&]*/, ""));
     });
     return b;
   }
@@ -302,16 +305,9 @@
   function syncSide(searching) {
     Array.prototype.forEach.call(document.querySelectorAll(".side-btn"), function (b) {
       var slug = b.getAttribute("data-slug");
-      var on = !searching && (slug ? selected.length === 1 && selected[0] === slug : !selected.length);
+      var on = !searching && (slug ? selected.indexOf(slug) !== -1 : !selected.length);
       b.classList.toggle("on", on);
-      if (on) {
-        b.setAttribute("aria-current", "true");
-        // On phones the pills sit in a swipe row: bring the chosen one into view.
-        var row = b.parentNode;
-        if (row.scrollWidth > row.clientWidth + 2) row.scrollTo({ left: Math.max(0, b.offsetLeft - 16), behavior: "smooth" });
-      } else {
-        b.removeAttribute("aria-current");
-      }
+      b.setAttribute("aria-pressed", on ? "true" : "false");
     });
   }
 })();
