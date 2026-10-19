@@ -1422,6 +1422,31 @@ section[id] {
   background: var(--accent-hover);
 }
 
+/* The MST logo lettering, huge and faded into the corner of the blue box. */
+.contact-phone {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.contact-phone::after {
+  content: "MST";
+  position: absolute;
+  right: 0.5rem;
+  bottom: -3rem;
+  z-index: -1;
+  font-family: var(--font-display);
+  font-size: clamp(11rem, 26vw, 19rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: currentColor;
+  opacity: 0.32;
+  -webkit-mask-image: linear-gradient(270deg, #000 45%, transparent 100%);
+  mask-image: linear-gradient(270deg, #000 45%, transparent 100%);
+  pointer-events: none;
+}
+
 .contact-phone .contact-label {
   color: var(--accent-ink);
   opacity: 0.8;
@@ -4469,5 +4494,92 @@ main::after {
 @media (prefers-color-scheme: light) {
   :where(:root:not([data-theme="dark"])) .quote-field :is(input, textarea) {
     background: #ffffff;
+  }
+}
+
+/* ---------- Contact cards: blue edge, solid icon tile, and the Open now badge ---------- */
+.contact-card {
+  border-left: 6px solid var(--accent);
+  border-radius: 18px;
+  box-shadow: 0 10px 22px -14px rgba(21, 25, 29, 0.45);
+}
+
+.contact .contact-card .ico--soft {
+  border-radius: 14px;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.contact-card--hours {
+  flex-wrap: wrap;
+}
+
+.contact-card--hours > div {
+  flex: 1 1 11rem;
+  min-width: 0;
+}
+
+.open-status {
+  --st: #1a7f4b;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding: 7px 14px;
+  border: 1px solid color-mix(in srgb, var(--st) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--st) 14%, transparent);
+  color: var(--st);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.open-status[hidden] {
+  display: none;
+}
+
+.open-status::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.open-status.is-open::before {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--st) 25%, transparent);
+}
+
+/* Closed: a quiet grey badge, no glow. */
+.open-status:not(.is-open) {
+  --st: var(--ink-2);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .open-status {
+    --st: #58c98c;
+  }
+
+  :root:not([data-theme="light"]) .open-status:not(.is-open) {
+    --st: var(--ink-2);
+  }
+}
+
+:root[data-theme="dark"] .open-status {
+  --st: #58c98c;
+}
+
+:root[data-theme="dark"] .open-status:not(.is-open) {
+  --st: var(--ink-2);
+}
+
+/* Phones: the badge drops under the hours, lined up with the text. */
+@media (max-width: 560px) {
+  .open-status {
+    margin-left: 64px;
   }
 }

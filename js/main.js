@@ -155,3 +155,24 @@
   window.addEventListener("resize", update);
   update();
 })();
+
+// Contact panel: the "Open now" / "Closed" badge on the business hours, worked out from the time in South Africa (Mon to Fri, 08:00 to 16:00).
+(function () {
+  var badge = document.querySelector(".open-status");
+  if (!badge) return;
+  function update() {
+    var p;
+    try {
+      p = new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Johannesburg", weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date());
+    } catch (e) { return; }
+    var v = {};
+    p.forEach(function (x) { v[x.type] = x.value; });
+    var mins = parseInt(v.hour, 10) * 60 + parseInt(v.minute, 10);
+    var open = ["Mon", "Tue", "Wed", "Thu", "Fri"].indexOf(v.weekday) !== -1 && mins >= 480 && mins < 960;
+    badge.textContent = open ? "Open now" : "Closed";
+    badge.classList.toggle("is-open", open);
+    badge.hidden = false;
+  }
+  update();
+  setInterval(update, 60000);
+})();
