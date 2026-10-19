@@ -29,7 +29,7 @@
           '<form novalidate>' +
             field("name", "Your name", "text", "name", true, "") +
             field("email", "Email address", "email", "email", true, "") +
-            field("phone", "Contact number", "tel", "tel", true, ' inputmode="tel" pattern="[0-9+()\\s\\-]{9,}"') +
+            field("phone", "Contact number", "tel", "tel", true, ' inputmode="tel" pattern="[0-9+\\(\\)\\s\\-]{9,}"') +
             field("company", "Company name <span class=\"quote-opt\">(optional)</span>", "text", "organization", false, "") +
             '<div class="quote-field"><label for="quote-message">What do you need a price on? <span class="quote-opt">(optional)</span></label>' +
             '<textarea id="quote-message" name="message" rows="3"></textarea></div>' +

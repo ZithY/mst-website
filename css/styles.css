@@ -386,8 +386,8 @@ section[id] {
   }
 
   .brand-sub {
-    font-size: 0.5625rem;
-    letter-spacing: 0.1em;
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
   }
 
   .theme-toggle {
@@ -2606,22 +2606,48 @@ main::after {
   font-weight: 600;
 }
 
+/* Closing call-to-action: a brand-blue banner so it stands out in both themes (about + custom pressure washers pages). */
 .about-cta {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 14px 24px;
+  gap: 18px 24px;
   margin-top: 48px;
-  padding: 22px 24px;
+  padding: 28px 26px;
+  overflow: hidden;
   border-radius: 28px;
-  background: var(--ink);
-  color: var(--bg);
+  background:
+    radial-gradient(120% 90% at 100% 0, rgba(127, 178, 236, 0.22), transparent 60%),
+    linear-gradient(135deg, #1f5fae, #0f3d78);
+  box-shadow: 0 22px 40px -22px #1f5fae;
+  color: #fff;
+}
+
+/* Faint MST watermark in the corner. */
+.about-cta::after {
+  content: "MST";
+  position: absolute;
+  right: -10px;
+  bottom: -28px;
+  color: rgba(255, 255, 255, 0.07);
+  font-size: 7rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.about-cta > * {
+  position: relative;
+  z-index: 1;
 }
 
 .about-cta p {
-  font-size: 1.125rem;
-  font-weight: 700;
+  font-size: 1.375rem;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .about-cta .btn {
@@ -2629,19 +2655,36 @@ main::after {
 }
 
 .about-cta .btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-ink);
+  background: #fff;
+  border-color: #fff;
+  color: #0f3d78;
+}
+
+.about-cta .btn-primary:hover {
+  box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
 .about-cta .btn-secondary {
-  border-color: var(--bg);
-  color: var(--bg);
+  border-color: rgba(255, 255, 255, 0.65);
+  color: #fff;
 }
 
 .about-cta .btn-secondary:hover {
-  background: var(--bg);
-  color: var(--ink);
+  background: #fff;
+  border-color: #fff;
+  color: #0f3d78;
+}
+
+/* Phones: stack the buttons full width so they are easy to tap. */
+@media (max-width: 560px) {
+  .about-cta .btn-row {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .about-cta .btn {
+    width: 100%;
+  }
 }
 
 /* Wide screens: sticky intro on the left, steps on the right joined by a rail.
@@ -3220,6 +3263,147 @@ main::after {
   }
 }
 
+/* The five choices on phones: swipeable cards with a short description (js/choose-path.js drives the dots). */
+.stop-body { display: contents; }
+.stop-num, .stop-desc, .stop-go, .path-hint { display: none; }
+
+@media (max-width: 759px) {
+  .choose-path {
+    display: flex;
+    gap: 10px;
+    margin: 22px calc(var(--gutter) * -1) 0;
+    padding: 6px var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .choose-path::-webkit-scrollbar { display: none; }
+  .choose-path::before { display: none; }
+
+  .choose-path li {
+    display: flex;
+    flex: 0 0 78%;
+    scroll-snap-align: start;
+  }
+
+  .stop {
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--surface);
+  }
+
+  .stop:hover,
+  .stop:focus-visible { transform: none; }
+
+  .stop-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .stop-dot {
+    width: auto;
+    height: auto;
+    border: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .stop-dot b { display: none; }
+  .stop:hover .stop-dot,
+  .stop:focus-visible .stop-dot { background: none; color: var(--accent-text); }
+
+  .stop-num {
+    display: block;
+    color: var(--accent);
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .stop-desc {
+    display: block;
+    color: var(--ink-2);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+
+  .stop-go {
+    display: block;
+    margin-top: auto;
+    padding-top: 6px;
+    color: var(--accent-text);
+    font-size: 0.875rem;
+    font-weight: 800;
+  }
+
+  .path-hint {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .path-dots { display: flex; margin-left: -6px; }
+
+  .path-dots button {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .path-dots button::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink-2);
+    opacity: 0.45;
+    transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .path-dots button.on::before { background: var(--accent); opacity: 1; transform: scale(1.4); }
+
+  .path-swipe {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: opacity 0.3s ease;
+  }
+
+  .path-swipe.is-end { opacity: 0.45; }
+  .path-swipe span { display: inline-block; font-size: 1.125rem; line-height: 1; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .path-swipe:not(.is-end) span { animation: swipe-nudge 1.3s ease-in-out infinite; }
+  }
+}
+
 .gallery {
   display: grid;
   gap: 12px;
@@ -3491,6 +3675,32 @@ main::after {
   stroke-linejoin: round;
 }
 
+/* Phones: once a product is in the list its stepper moves to the price line, so the name keeps the full row width. */
+@media (max-width: 719px) {
+  .has-shop .prod:has(.qstep) {
+    grid-template-columns: 46px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "ic body body"
+      "ic price act";
+    align-items: center;
+  }
+}
+
+/* Phones: the quote-list button becomes a bar docked to the bottom edge instead of a pill floating over the rows,
+   and the page gets matching space so the last row is never hidden behind it. */
+@media (max-width: 719px) {
+  .ql-fab {
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    justify-content: center;
+    min-height: 52px;
+  }
+
+  .has-ql body {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+}
 /* The list inside the request pop-up. */
 .quote-items {
   margin-top: 16px;

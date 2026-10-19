@@ -62,6 +62,7 @@
   function renderFab() {
     var n = api.count();
     fab.classList.toggle("show", n > 0);
+    document.documentElement.classList.toggle("has-ql", n > 0);
     fabText.textContent = "Quote list (" + n + ")";
     fab.setAttribute("aria-label", "Open your quote list, " + n + (n === 1 ? " item" : " items"));
   }
