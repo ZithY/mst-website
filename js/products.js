@@ -251,7 +251,8 @@
       "vacuum-motors": '<circle cx="11" cy="12" r="6"/><path d="M17 12h4M7 8l8 8M4 9v6"/>',
       "vacuum-spares": '<circle cx="12" cy="13" r="8"/><path d="M12 13l4-4M12 5v2"/>',
       "vacuum-accessories": '<path d="M4 6h10l4 8h-6M10 6v8M4 20h16"/>',
-      "cleaning-chemicals": '<path d="M9 3h6M10 3v5l-4 9a3 3 0 0 0 3 4h6a3 3 0 0 0 3-4l-4-9V3M8 14h8"/>'
+      "cleaning-chemicals": '<path d="M9 3h6M10 3v5l-4 9a3 3 0 0 0 3 4h6a3 3 0 0 0 3-4l-4-9V3M8 14h8"/>',
+      "industrial-vacuum-cleaners": '<path d="M7 3h6l2 5H5zM6 8v10a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V8M16 12h3a2 2 0 0 1 2 2v3"/>'
     };
     function icon(slug) {
       return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[slug] || ICONS["vacuum-spares"]) + "</svg>";
@@ -283,8 +284,11 @@
         var photo = (window.MST_IMAGES || {})[nameEl.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")];
         if (photo) {
           // A real photo replaces the category icon (the icon is still the fallback for products without one).
+          // photo is [path, background colour of the picture], so the box blends with it whatever its shape.
+          var src = Array.isArray(photo) ? photo[0] : photo;
           ic.className += " has-img";
-          ic.innerHTML = '<img src="../' + photo + '" alt="" loading="lazy" width="400" height="300">';
+          if (Array.isArray(photo) && photo[1]) ic.style.background = photo[1];
+          ic.innerHTML = '<img src="../' + src + '" alt="" loading="lazy" decoding="async" width="640" height="640">';
         } else {
           ic.innerHTML = icon(slug);
         }

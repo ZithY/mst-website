@@ -4081,11 +4081,17 @@ main::after {
   background: var(--surface-2);
 }
 
+.prod-ic.has-img {
+  position: relative;
+}
+
 .prod-ic img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .has-shop .prod:has(.prod-ic.has-img) {
