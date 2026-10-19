@@ -4589,3 +4589,256 @@ main::after {
     margin-left: 64px;
   }
 }
+
+/* ---------- Home page: Google reviews carousel (js/reviews.js) ---------- */
+.reviews {
+  padding-block: var(--section-y);
+}
+
+.rv-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.rv-track {
+  display: flex;
+  flex: 1;
+  gap: 16px;
+  min-width: 0;
+  margin: 0;
+  padding: 10px 4px 20px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rv-track::-webkit-scrollbar {
+  display: none;
+}
+
+.rv-track:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+.rv-card {
+  display: flex;
+  flex: 0 0 min(320px, 84%);
+  scroll-snap-align: start;
+}
+
+.rv-card figure {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid var(--card-line);
+  border-radius: 20px;
+  background: var(--card);
+  box-shadow: 0 10px 22px -14px rgba(21, 25, 29, 0.45);
+}
+
+.rv-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rv-av {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 800;
+}
+
+.rv-who {
+  flex: 1;
+  min-width: 0;
+}
+
+.rv-who b,
+.rv-who small {
+  display: block;
+}
+
+.rv-who b {
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+.rv-who small {
+  color: var(--ink-2);
+  font-size: 0.8125rem;
+}
+
+.rv-g {
+  flex: none;
+  color: var(--ink-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.rv-g b {
+  color: #4285f4;
+  font-weight: 800;
+}
+
+.rv-stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.rv-stars svg {
+  width: 18px;
+  height: 18px;
+  fill: #e8a317;
+}
+
+.rv-card blockquote {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.rv-arrow {
+  display: none;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+
+.rv-arrow svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rv-arrow:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.rv-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.rv-arrow:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.rv-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-top: 2px;
+}
+
+.rv-dots[hidden] {
+  display: none;
+}
+
+.rv-dots button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.rv-dots button::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink-2);
+  opacity: 0.45;
+  transition: width 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.rv-dots button.on::before {
+  width: 22px;
+  border-radius: 4px;
+  background: var(--accent);
+  opacity: 1;
+}
+
+.rv-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px 32px;
+  margin-top: 22px;
+}
+
+.rv-score {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.rv-score b {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.rv-score small {
+  color: var(--ink-2);
+  font-size: 0.875rem;
+}
+
+.reviews .btn {
+  border-radius: 999px;
+}
+
+@media (min-width: 640px) {
+  .rv-card {
+    flex-basis: calc((100% - 16px) / 2);
+  }
+}
+
+@media (min-width: 900px) {
+  .rv-arrow {
+    display: grid;
+  }
+
+  .rv-card {
+    flex-basis: calc((100% - 32px) / 3);
+  }
+
+  .rv-wrap.is-static .rv-arrow {
+    display: none;
+  }
+}
