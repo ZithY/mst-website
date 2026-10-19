@@ -290,7 +290,11 @@
           if (Array.isArray(photo) && photo[1]) ic.style.background = photo[1];
           ic.innerHTML = '<img src="../' + src + '" alt="" loading="lazy" decoding="async" width="640" height="640">';
         } else {
-          ic.innerHTML = icon(slug);
+          // No photo yet: a dark spotlight tile. The list view shows the category icon with a small camera badge;
+          // the grid view shows a camera and "Product photo in progress". It disappears by itself once a photo is added.
+          var cam = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+          ic.className += " is-ph";
+          ic.innerHTML = icon(slug) + '<span class="ph-badge">' + cam + '</span><span class="ph-cam">' + cam + '</span><span class="ph-t1">Product photo</span><span class="ph-t2">in progress</span>';
         }
         var body = document.createElement("div");
         body.className = "prod-body";
