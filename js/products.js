@@ -196,7 +196,8 @@
       "engines-engine-spares": '<rect x="4" y="8" width="14" height="9" rx="1"/><path d="M8 8V5h6v3M18 11h3v3h-3M7 17v2M15 17v2"/>',
       "vacuum-motors": '<circle cx="11" cy="12" r="6"/><path d="M17 12h4M7 8l8 8M4 9v6"/>',
       "vacuum-spares": '<circle cx="12" cy="13" r="8"/><path d="M12 13l4-4M12 5v2"/>',
-      "vacuum-accessories": '<path d="M4 6h10l4 8h-6M10 6v8M4 20h16"/>'
+      "vacuum-accessories": '<path d="M4 6h10l4 8h-6M10 6v8M4 20h16"/>',
+      "cleaning-chemicals": '<path d="M9 3h6M10 3v5l-4 9a3 3 0 0 0 3 4h6a3 3 0 0 0 3-4l-4-9V3M8 14h8"/>'
     };
     function icon(slug) {
       return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[slug] || ICONS["vacuum-spares"]) + "</svg>";
@@ -211,6 +212,8 @@
       if ((m = n.match(/\b(\d{3})\s*V\b/))) o.push([m[1] + " V"]);
       if ((m = n.match(/\b(Petrol|Diesel)\b/i))) o.push([m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase()]);
       if ((m = n.match(/(\d+)\s*(?:L|Liter)\b/i))) o.push([m[1] + " L"]);
+      if ((m = n.match(/(\d+(?:\.\d+)?)\s*kg\b/i))) o.push([m[1] + " kg"]);
+      if ((m = n.match(/(\d+)\s*ml\b/i))) o.push([m[1] + " ML"]);
       if ((m = n.match(/\b(\d+)\s*m\b/))) o.push([m[1] + " m"]);
       return o.slice(0, 4);
     }
