@@ -61,7 +61,60 @@
     badge.textContent = selected.length;
     badge.hidden = !selected.length;
     syncSide(t.length);
+    applyView();
     alignHeads();
+  }
+
+  // ---- list / grid view ----
+  // Grid shows the photo cards, list the compact rows. The visitor's choice is remembered; until they choose, it opens as a grid
+  // when most of the products on show have a photo, and as a list otherwise (so a page of icon tiles never fills the screen).
+  var viewKey = "mst-product-view";
+  var viewPref = "";
+  try { viewPref = localStorage.getItem(viewKey) || ""; } catch (e) { /* no storage: the choice lasts for this visit */ }
+
+  function applyView() {
+    var lists = document.querySelectorAll(".prod-list");
+    if (!lists.length) return;
+    var shown = 0, photos = 0;
+    Array.prototype.forEach.call(document.querySelectorAll(".prod:not([hidden])"), function (r) {
+      shown++;
+      if (r.querySelector(".prod-ic.has-img")) photos++;
+    });
+    var grid = viewPref ? viewPref === "grid" : shown > 0 && photos / shown >= 0.5;
+    Array.prototype.forEach.call(lists, function (l) { l.classList.toggle("is-grid", grid); });
+    Array.prototype.forEach.call(document.querySelectorAll(".view-btn"), function (b) {
+      var on = b.getAttribute("data-view") === (grid ? "grid" : "list");
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function buildViewToggle() {
+    if (!window.MST_IMAGES || !Object.keys(window.MST_IMAGES).length || !count) return;
+    var row = document.createElement("div");
+    row.className = "result-row";
+    count.parentNode.insertBefore(row, count);
+    row.appendChild(count);
+    var box = document.createElement("div");
+    box.className = "view-toggle";
+    box.setAttribute("role", "group");
+    box.setAttribute("aria-label", "Product view");
+    [["list", "List", '<path d="M4 6h16M4 12h16M4 18h16"/>'],
+     ["grid", "Grid", '<rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/>']
+    ].forEach(function (v) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "view-btn";
+      b.setAttribute("data-view", v[0]);
+      b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + v[2] + "</svg><span>" + v[1] + "</span>";
+      b.addEventListener("click", function () {
+        viewPref = v[0];
+        try { localStorage.setItem(viewKey, viewPref); } catch (e) { /* ignore */ }
+        applyView();
+      });
+      box.appendChild(b);
+    });
+    row.appendChild(box);
   }
 
   // Desktop: the sidebar heading and the first visible category heading get the same height,
@@ -178,6 +231,7 @@
   // ---- start-up: ?q=search from the header, #category from the homepage tiles ----
   buildPanel();
   buildShop();
+  buildViewToggle();
   var q = new URLSearchParams(location.search).get("q");
   if (q) input.value = q;
   var hash = location.hash.replace("#", "");
@@ -226,7 +280,14 @@
         var ic = document.createElement("span");
         ic.className = "prod-ic";
         ic.setAttribute("aria-hidden", "true");
-        ic.innerHTML = icon(slug);
+        var photo = (window.MST_IMAGES || {})[nameEl.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")];
+        if (photo) {
+          // A real photo replaces the category icon (the icon is still the fallback for products without one).
+          ic.className += " has-img";
+          ic.innerHTML = '<img src="../' + photo + '" alt="" loading="lazy" width="400" height="300">';
+        } else {
+          ic.innerHTML = icon(slug);
+        }
         var body = document.createElement("div");
         body.className = "prod-body";
         row.insertBefore(ic, row.firstChild);

@@ -20,18 +20,19 @@
 
 /* ---------- Tokens ---------- */
 :root {
-  --bg: #f2f3f4;
-  --surface: #fafafa;
-  --surface-2: #e4e7ea;
+  /* Light theme: a mid-grey page with white cards and firm edges, so every box is easy to tell apart. */
+  --bg: #cfd5dc;
+  --surface: #ffffff;
+  --surface-2: #dbe3ec;
   --ink: #15191d;
-  --ink-2: #49515a;
-  --line: #cbd0d5;
+  --ink-2: #2f3841;
+  --line: #9aa5b1;
   --accent: #135295;
   --accent-ink: #fafafa;
-  --accent-text: #135295;
+  --accent-text: #0d3f78;
   --accent-hover: #053668;
-  --card: #fafafa;
-  --card-line: #cbd0d5;
+  --card: #ffffff;
+  --card-line: #7f8b98;
   --error: #b42525;
 
   --font: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -835,8 +836,8 @@ section[id] {
 
 /* Light theme: tiles get a firmer edge and shadow, and the grey ones go charcoal so they stand out from the glow. */
 :where(:root[data-theme="light"]) .tile:not(.tile--accent) {
-  border-color: #c2c9d0;
-  box-shadow: 0 10px 22px -14px rgba(21, 25, 29, 0.35);
+  border-color: #7f8b98;
+  box-shadow: 0 10px 22px -14px rgba(21, 25, 29, 0.55);
 }
 
 :where(:root[data-theme="light"]) .tile--steel {
@@ -851,8 +852,8 @@ section[id] {
 
 @media (prefers-color-scheme: light) {
   :where(:root:not([data-theme="dark"])) .tile:not(.tile--accent) {
-    border-color: #c2c9d0;
-    box-shadow: 0 10px 22px -14px rgba(21, 25, 29, 0.35);
+    border-color: #7f8b98;
+    box-shadow: 0 10px 22px -14px rgba(21, 25, 29, 0.55);
   }
 
   :where(:root:not([data-theme="dark"])) .tile--steel {
@@ -1233,16 +1234,16 @@ section[id] {
 
 /* Light theme: a firmer edge and a soft shadow so the panels stand out from the page. */
 :where(:root[data-theme="light"]) .spec {
-  border-color: #b9c1c9;
+  border-color: #7f8b98;
   background: var(--card);
-  box-shadow: 0 1px 2px rgba(21, 25, 29, 0.08), 0 14px 26px -16px rgba(21, 25, 29, 0.4);
+  box-shadow: 0 1px 2px rgba(21, 25, 29, 0.08), 0 14px 26px -16px rgba(21, 25, 29, 0.55);
 }
 
 @media (prefers-color-scheme: light) {
   :where(:root:not([data-theme="dark"])) .spec {
-    border-color: #b9c1c9;
+    border-color: #7f8b98;
     background: var(--card);
-    box-shadow: 0 1px 2px rgba(21, 25, 29, 0.08), 0 14px 26px -16px rgba(21, 25, 29, 0.4);
+    box-shadow: 0 1px 2px rgba(21, 25, 29, 0.08), 0 14px 26px -16px rgba(21, 25, 29, 0.55);
   }
 }
 
@@ -3096,16 +3097,16 @@ main::after {
 
 /* Light theme: a firmer edge and a soft shadow, like the other panels. */
 :where(:root[data-theme="light"]) .spec-table {
-  border-color: #b9c1c9;
+  border-color: #7f8b98;
   background: var(--card);
-  box-shadow: 0 14px 26px -18px rgba(21, 25, 29, 0.4);
+  box-shadow: 0 14px 26px -18px rgba(21, 25, 29, 0.55);
 }
 
 @media (prefers-color-scheme: light) {
   :where(:root:not([data-theme="dark"])) .spec-table {
-    border-color: #b9c1c9;
+    border-color: #7f8b98;
     background: var(--card);
-    box-shadow: 0 14px 26px -18px rgba(21, 25, 29, 0.4);
+    box-shadow: 0 14px 26px -18px rgba(21, 25, 29, 0.55);
   }
 }
 
@@ -3996,6 +3997,175 @@ main::after {
   }
 }
 
+/* ---------- Product photos, and the List / Grid switch (js/products.js, js/product-images.js) ---------- */
+.result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.view-toggle {
+  display: inline-flex;
+  flex: none;
+  padding: 3px;
+  border: 1px solid var(--card-line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+}
+
+.view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.view-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.view-btn.on {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.view-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* List view: a photo replaces the icon tile and is a little larger. */
+.prod-ic.has-img {
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.prod-ic img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.has-shop .prod:has(.prod-ic.has-img) {
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+}
+
+.has-shop .prod .prod-ic.has-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+}
+
+@media (min-width: 720px) {
+  .has-shop .prod:has(.prod-ic.has-img) {
+    grid-template-columns: 64px minmax(0, 1fr) auto auto;
+  }
+}
+
+/* Grid view: photo cards that fit as many across as the width allows. */
+.has-shop .prod-list.is-grid {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.has-shop .prod-list.is-grid .prod {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "ic ic"
+    "body body"
+    "price act";
+  gap: 0;
+  align-content: start;
+  align-items: center;
+  padding: 0;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.has-shop .prod-list.is-grid .prod .prod-ic,
+.has-shop .prod-list.is-grid .prod .prod-ic.has-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  border-radius: 0;
+}
+
+.has-shop .prod-list.is-grid .prod .prod-ic svg {
+  width: 44px;
+  height: 44px;
+}
+
+.has-shop .prod-list.is-grid .prod-body {
+  padding: 14px 16px 4px;
+}
+
+.has-shop .prod-list.is-grid .prod-name {
+  overflow-wrap: anywhere;
+}
+
+.has-shop .prod-list.is-grid .prod-price {
+  padding: 8px 0 16px 16px;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  text-align: left;
+}
+
+.has-shop .prod-list.is-grid .prod-act {
+  padding: 8px 14px 14px 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .has-shop .prod-list.is-grid .prod:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* Phones: two cards across; the price and the add button stack so each card stays readable. */
+@media (max-width: 599px) {
+  .has-shop .prod-list.is-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .has-shop .prod-list.is-grid .prod {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "ic"
+      "body"
+      "price"
+      "act";
+  }
+
+  .has-shop .prod-list.is-grid .prod-body {
+    padding: 10px 12px 2px;
+  }
+
+  .has-shop .prod-list.is-grid .prod-price {
+    padding: 6px 12px 8px;
+  }
+
+  .has-shop .prod-list.is-grid .prod-act {
+    justify-content: flex-start;
+    padding: 0 12px 12px;
+  }
+}
 /* Desktop: a sticky sidebar. Its heading shares the category heading style, so "Products" and its box sit level with the category title and its cards. */
 @media (min-width: 900px) {
   .has-shop {
@@ -4095,24 +4265,24 @@ main::after {
 
 /* Light theme: a firmer edge so the boxes stand out from the page. */
 :where(:root[data-theme="light"]) :is(.has-shop .prod, .side-list, .side-btn) {
-  border-color: #b9c1c9;
+  border-color: #7f8b98;
 }
 
 :where(:root[data-theme="light"]) .has-shop .prod,
 :where(:root[data-theme="light"]) .side-list {
   background: var(--card);
-  box-shadow: 0 10px 22px -16px rgba(21, 25, 29, 0.4);
+  box-shadow: 0 10px 22px -16px rgba(21, 25, 29, 0.55);
 }
 
 @media (prefers-color-scheme: light) {
   :where(:root:not([data-theme="dark"])) :is(.has-shop .prod, .side-list, .side-btn) {
-    border-color: #b9c1c9;
+    border-color: #7f8b98;
   }
 
   :where(:root:not([data-theme="dark"])) .has-shop .prod,
   :where(:root:not([data-theme="dark"])) .side-list {
     background: var(--card);
-    box-shadow: 0 10px 22px -16px rgba(21, 25, 29, 0.4);
+    box-shadow: 0 10px 22px -16px rgba(21, 25, 29, 0.55);
   }
 }
 
@@ -4228,5 +4398,76 @@ main::after {
     background: color-mix(in srgb, var(--surface) 82%, transparent);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
+  }
+}
+
+/* ---------- Light theme: charcoal category box (matches the header and tiles) ---------- */
+:where(:root[data-theme="light"]) .side-list {
+  --ink: #f1f3f5;
+  --ink-2: #b4bcc4;
+  --accent: #7fb2ec;
+  --accent-ink: #15191d;
+  border-color: #1e2429;
+  background: #1e2429;
+  color: #f1f3f5;
+}
+
+:where(:root[data-theme="light"]) .side-list .side-btn.on {
+  background: rgba(127, 178, 236, 0.26);
+  color: #f1f3f5;
+}
+
+:where(:root[data-theme="light"]) .side-list .side-btn:hover {
+  background: rgba(127, 178, 236, 0.16);
+}
+
+@media (prefers-color-scheme: light) {
+  :where(:root:not([data-theme="dark"])) .side-list {
+    --ink: #f1f3f5;
+    --ink-2: #b4bcc4;
+    --accent: #7fb2ec;
+    --accent-ink: #15191d;
+    border-color: #1e2429;
+    background: #1e2429;
+    color: #f1f3f5;
+  }
+
+  :where(:root:not([data-theme="dark"])) .side-list .side-btn.on {
+    background: rgba(127, 178, 236, 0.26);
+    color: #f1f3f5;
+  }
+
+  :where(:root:not([data-theme="dark"])) .side-list .side-btn:hover {
+    background: rgba(127, 178, 236, 0.16);
+  }
+}
+
+/* ---------- Light theme: firm edge and soft shadow on the card-style boxes of the other pages ---------- */
+:where(:root[data-theme="light"]) :is(.svc-card, .step, .browse-panel, .cat-card) {
+  border-color: var(--card-line);
+}
+
+:where(:root[data-theme="light"]) :is(.svc-card, .step, .browse-panel) {
+  box-shadow: 0 10px 22px -14px rgba(21, 25, 29, 0.55);
+}
+
+@media (prefers-color-scheme: light) {
+  :where(:root:not([data-theme="dark"])) :is(.svc-card, .step, .browse-panel, .cat-card) {
+    border-color: var(--card-line);
+  }
+
+  :where(:root:not([data-theme="dark"])) :is(.svc-card, .step, .browse-panel) {
+    box-shadow: 0 10px 22px -14px rgba(21, 25, 29, 0.55);
+  }
+}
+
+/* ---------- Light theme: white form fields inside the white quote pop-up ---------- */
+:where(:root[data-theme="light"]) .quote-field :is(input, textarea) {
+  background: #ffffff;
+}
+
+@media (prefers-color-scheme: light) {
+  :where(:root:not([data-theme="dark"])) .quote-field :is(input, textarea) {
+    background: #ffffff;
   }
 }
