@@ -284,7 +284,6 @@
       input.value = "";
       var next = !slug ? [] : selected.indexOf(slug) !== -1 ? selected.filter(function (s) { return s !== slug; }) : selected.concat(slug);
       setSelected(next);
-      backToTop();
       if (history.replaceState) history.replaceState(null, "", next.length === 1 ? "#" + next[0] : location.pathname + location.search.replace(/[?&]q=[^&]*/, ""));
     });
     return b;
